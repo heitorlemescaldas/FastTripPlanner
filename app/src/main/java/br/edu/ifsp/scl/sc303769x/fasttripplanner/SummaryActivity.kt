@@ -26,6 +26,7 @@ class SummaryActivity : ComponentActivity() {
         val transporte = intent.getBooleanExtra(TripExtras.TRANSPORTE, false)
         val alimentacao = intent.getBooleanExtra(TripExtras.ALIMENTACAO, false)
         val passeios = intent.getBooleanExtra(TripExtras.PASSEIOS, false)
+        val modoEconomico = intent.getBooleanExtra(TripExtras.MODOECONOMICO, false)
 
         setContent {
             FastTripPlannerTheme {
@@ -38,6 +39,7 @@ class SummaryActivity : ComponentActivity() {
                         transporte = transporte,
                         alimentacao = alimentacao,
                         passeios = passeios,
+                        modoEconomico = modoEconomico,
                         modifier = Modifier.padding(innerPadding)
                     )
                 }
@@ -50,6 +52,7 @@ class SummaryActivity : ComponentActivity() {
 fun Tela3ResumoViagem(
     destino: String, dias: Int, orcamento: Double, hospedagem: String,
     transporte: Boolean, alimentacao: Boolean, passeios: Boolean,
+    modoEconomico: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
@@ -61,13 +64,14 @@ fun Tela3ResumoViagem(
         "Luxo" -> 2.2
         else -> 1.0 // Econômica
     }
-
     var extras = 0.0
     if (transporte) extras += 300.0
     if (alimentacao) extras += (50.0 * dias)
     if (passeios) extras += (120.0 * dias)
 
     val custoTotal = (custoBase * multiplicadorHospedagem) + extras
+
+    val custoTotalModoEconomico = (custoBase * 0.85) + extras
 
     Column(
         modifier = modifier
@@ -94,7 +98,8 @@ fun Tela3ResumoViagem(
 
         // Exibição do Custo Total formatado
         Text(
-            text = "Custo Total: R$ ${String.format("%.2f", custoTotal)}",
+            text = if (modoEconomico) "Custo Total: R$ ${String.format("%.2f", custoTotalModoEconomico)}"
+            else "Custo Total: R$ ${String.format("%.2f", custoTotal)}",
             style = MaterialTheme.typography.titleLarge,
             color = MaterialTheme.colorScheme.primary
         )

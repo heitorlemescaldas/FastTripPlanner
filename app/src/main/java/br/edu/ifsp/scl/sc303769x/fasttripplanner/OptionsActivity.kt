@@ -47,6 +47,7 @@ fun Tela2OpcoesViagem(destino: String, dias: Int, orcamento: Double, onBack: () 
 
     // Opções de Hospedagem (Radio Buttons)
     val hospedagemOptions = listOf("Econômica", "Conforto", "Luxo")
+    val somenteEconomica = "Econômica"
     var hospedagemSelecionada by rememberSaveable { mutableStateOf(hospedagemOptions[0]) }
 
     // Serviços Adicionais (Checkboxes)
@@ -54,13 +55,32 @@ fun Tela2OpcoesViagem(destino: String, dias: Int, orcamento: Double, onBack: () 
     var isAlimentacao by rememberSaveable { mutableStateOf(false) }
     var isPasseios by rememberSaveable { mutableStateOf(false) }
 
+    // Modo Economico
+    var modoEconomico by rememberSaveable { mutableStateOf(false) }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.Center
     ) {
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(checked = modoEconomico, onCheckedChange = { modoEconomico = it })
+            Text("Modo Econômico")
+        }
+
         Text("Opções de Hospedagem", style = MaterialTheme.typography.titleMedium)
+        if (modoEconomico)  hospedagemOptions.forEach { opcao ->
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                RadioButton(
+                    selected = (opcao == somenteEconomica),
+                    onClick = { somenteEconomica }
+                )
+                Text(text = opcao)
+            }
+        }
+        else
         hospedagemOptions.forEach { opcao ->
             Row(verticalAlignment = Alignment.CenterVertically) {
                 RadioButton(
@@ -82,10 +102,15 @@ fun Tela2OpcoesViagem(destino: String, dias: Int, orcamento: Double, onBack: () 
             Checkbox(checked = isAlimentacao, onCheckedChange = { isAlimentacao = it })
             Text("Alimentação (+ R$ 50/dia)")
         }
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        if (modoEconomico)
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text("Opção de Passeios Indisponível no Modo Econômico")
+            }
+        else
+            Row(verticalAlignment = Alignment.CenterVertically) {
             Checkbox(checked = isPasseios, onCheckedChange = { isPasseios = it })
             Text("Passeios (+ R$ 120/dia)")
-        }
+            }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -103,6 +128,7 @@ fun Tela2OpcoesViagem(destino: String, dias: Int, orcamento: Double, onBack: () 
                     putExtra(TripExtras.TRANSPORTE, isTransporte)
                     putExtra(TripExtras.ALIMENTACAO, isAlimentacao)
                     putExtra(TripExtras.PASSEIOS, isPasseios)
+                    putExtra(TripExtras.MODOECONOMICO, modoEconomico)
                 }
                 context.startActivity(intent)
             }) {

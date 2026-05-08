@@ -109,4 +109,6 @@ object TripExtras {
     const val TRANSPORTE = "extra_transporte"
     const val ALIMENTACAO = "extra_alimentacao"
     const val PASSEIOS = "extra_passeios"
+
+    const val MODOECONOMICO = "modo_economico"
 }
